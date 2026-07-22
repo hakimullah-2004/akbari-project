@@ -88,8 +88,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     // Reverse customer debt if this was an unpaid credit sale
     if (sale.customerId && parseFloat(String(sale.remainingAmount)) > 0) {
+      const remainingAmountNum = parseFloat(String(sale.remainingAmount));
       await db.update(customers).set({
-        totalDebt: sql`total_debt - ${sale.remainingAmount}`,
+        totalDebt: sql`total_debt - ${remainingAmountNum}`,
         updatedAt: new Date(),
       }).where(eq(customers.id, sale.customerId));
     }

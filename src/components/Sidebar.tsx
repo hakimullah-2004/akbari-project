@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, Package, Users, ShoppingCart, TruckIcon,
   Receipt, CreditCard, DollarSign, BarChart3, Settings,
-  LogOut, Menu, X, Leaf, Archive, ChevronDown, ChevronUp, Activity
+  LogOut, Menu, X, Leaf, Archive, ChevronDown, ChevronUp
 } from "lucide-react";
 
 interface NavItem {
@@ -44,7 +44,6 @@ const navItems: NavItem[] = [
   { label: "مصارف", href: "/dashboard/expenses", icon: DollarSign },
   { label: "تأمین‌کنندگان", href: "/dashboard/suppliers", icon: TruckIcon },
   { label: "گزارش‌ها", href: "/dashboard/reports", icon: BarChart3 },
-  { label: "فعالیت کاربران", href: "/dashboard/activity", icon: Activity, roles: ["admin"] },
   { label: "کاربران", href: "/dashboard/users", icon: Settings, roles: ["admin"] },
 ];
 

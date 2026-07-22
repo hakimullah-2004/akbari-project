@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { formatDate, ROLE_LABELS } from "@/lib/utils";
-import { Plus, Edit2, Trash2, X, Settings, ShieldAlert, ShieldCheck, ShieldOff } from "lucide-react";
+import { Plus, Edit2, X, Settings, ShieldAlert, ShieldCheck, ShieldOff, XCircle } from "lucide-react";
 
 interface User {
   id: number;
@@ -83,6 +83,13 @@ export default function UsersPage() {
     else { const d = await res.json(); toast.error(d.error || "خطا در حذف"); }
   };
 
+  const handlePermanentDelete = async (u: User) => {
+    if (!confirm(`آیا مطمئن هستید که می‌خواهید کاربر "${u.fullName}" را برای همیشه حذف کنید؟ این کار قابل بازگشت نیست.`)) return;
+    const res = await fetch(`/api/users/${u.id}?permanent=true`, { method: "DELETE" });
+    if (res.ok) { toast.success("کاربر برای همیشه حذف شد"); fetchUsers(); }
+    else { const d = await res.json(); toast.error(d.error || "خطا در حذف"); }
+  };
+
   if (unauthorized) {
     return (
       <div className="flex flex-col items-center justify-center h-96 text-center">
@@ -153,10 +160,13 @@ export default function UsersPage() {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         {u.isActive && (
-                          <button onClick={() => handleDeactivate(u)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 className="w-4 h-4" />
+                          <button onClick={() => handleDeactivate(u)} className="p-1.5 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors" title="غیرفعال کردن">
+                            <ShieldOff className="w-4 h-4" />
                           </button>
                         )}
+                        <button onClick={() => handlePermanentDelete(u)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="حذف کامل">
+                          <XCircle className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>

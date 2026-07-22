@@ -36,6 +36,22 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const { id } = await params;
   if (parseInt(id) === session.userId) return NextResponse.json({ error: "نمی‌توانید خود را حذف کنید" }, { status: 400 });
 
+  const { searchParams } = new URL(request.url);
+  const permanent = searchParams.get("permanent") === "true";
+
+  if (permanent) {
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, parseInt(id)));
+      await db.delete(users).where(eq(users.id, parseInt(id)));
+      await logActivity(session.userId, "delete", `حذف کامل کاربر: ${user?.username || id}`, "user", parseInt(id));
+      return NextResponse.json({ success: true });
+    } catch {
+      return NextResponse.json({
+        error: "این کاربر دارای سوابق ثبت‌شده (فروش، فعالیت و ...) است و نمی‌توان آن را کاملاً حذف کرد. می‌توانید آن را غیرفعال کنید.",
+      }, { status: 400 });
+    }
+  }
+
   await db.update(users).set({ isActive: false }).where(eq(users.id, parseInt(id)));
   await logActivity(session.userId, "delete", `غیرفعال کردن کاربر با شناسه ${id}`, "user", parseInt(id));
   return NextResponse.json({ success: true });
