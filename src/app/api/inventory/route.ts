@@ -41,6 +41,48 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ logs });
 }
 
+export async function DELETE(request: NextRequest) {
+  const session = await getSession();
+  if (!session || session.role !== "admin") return NextResponse.json({ error: "فقط مدیر سیستم می‌تواند حذف کند" }, { status: 401 });
+
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "شناسه لازم است" }, { status: 400 });
+
+  try {
+    const logId = parseInt(id);
+    const [log] = await db.select().from(stockTransactions).where(eq(stockTransactions.id, logId));
+    if (!log) return NextResponse.json({ error: "تراکنش پیدا نشد" }, { status: 404 });
+
+    // Find the most recent transaction for this product
+    const [latest] = await db
+      .select({ id: stockTransactions.id })
+      .from(stockTransactions)
+      .where(eq(stockTransactions.productId, log.productId))
+      .orderBy(desc(stockTransactions.id))
+      .limit(1);
+
+    let stockRestored = false;
+    if (latest && latest.id === logId) {
+      await db.update(products).set({ currentStock: log.previousStock, updatedAt: new Date() }).where(eq(products.id, log.productId));
+      stockRestored = true;
+    }
+
+    await db.delete(stockTransactions).where(eq(stockTransactions.id, logId));
+    await logActivity(session.userId, "delete", `حذف تراکنش موجودی با شناسه ${logId}`, "inventory", logId);
+
+    return NextResponse.json({
+      success: true,
+      message: stockRestored
+        ? "تراکنش حذف شد و موجودی به حالت قبل بازگشت"
+        : "تراکنش حذف شد (چون تراکنش‌های جدیدتری برای این جنس ثبت شده، موجودی فعلی تغییر نکرد)",
+    });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "خطا در حذف تراکنش" }, { status: 500 });
+  }
+}
+
 export async function POST(request: NextRequest) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

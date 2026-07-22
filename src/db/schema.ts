@@ -143,7 +143,7 @@ export const sales = pgTable("sales", {
   id: serial("id").primaryKey(),
   invoiceNumber: varchar("invoice_number", { length: 50 }).notNull().unique(),
   customerId: integer("customer_id").references(() => customers.id),
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
   totalAmount: decimal("total_amount", { precision: 12, scale: 2 }).notNull().default("0"),
   discountAmount: decimal("discount_amount", { precision: 12, scale: 2 }).notNull().default("0"),
   finalAmount: decimal("final_amount", { precision: 12, scale: 2 }).notNull().default("0"),
@@ -172,7 +172,7 @@ export const purchases = pgTable("purchases", {
   id: serial("id").primaryKey(),
   invoiceNumber: varchar("invoice_number", { length: 50 }),
   supplierId: integer("supplier_id").references(() => suppliers.id),
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
   totalAmount: decimal("total_amount", { precision: 12, scale: 2 }).notNull().default("0"),
   paidAmount: decimal("paid_amount", { precision: 12, scale: 2 }).notNull().default("0"),
   notes: text("notes"),
@@ -198,7 +198,7 @@ export const creditPayments = pgTable("credit_payments", {
   amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
   notes: text("notes"),
   paymentDate: timestamp("payment_date").notNull().defaultNow(),
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -208,7 +208,7 @@ export const expenses = pgTable("expenses", {
   category: expenseCategoryEnum("category").notNull(),
   description: text("description"),
   amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
   expenseDate: timestamp("expense_date").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -224,14 +224,14 @@ export const stockTransactions = pgTable("stock_transactions", {
   referenceId: integer("reference_id"),
   referenceType: varchar("reference_type", { length: 50 }),
   notes: text("notes"),
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // Activity Logs Table
 export const activityLogs = pgTable("activity_logs", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
   activityType: activityTypeEnum("activity_type").notNull(),
   description: text("description").notNull(),
   entityType: varchar("entity_type", { length: 50 }),

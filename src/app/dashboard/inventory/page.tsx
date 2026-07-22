@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { formatDateTime, formatNumber } from "@/lib/utils";
-import { Archive, Plus, X, ArrowUp, ArrowDown, Settings2 } from "lucide-react";
+import { Archive, Plus, X, ArrowUp, ArrowDown, Settings2, Trash2 } from "lucide-react";
 
 interface StockLog {
   id: number;
@@ -42,6 +42,19 @@ export default function InventoryPage() {
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ productId: "", transactionType: "adjustment", quantity: "", notes: "" });
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then(r => r.ok ? r.json() : null).then(d => setIsAdmin(d?.user?.role === "admin"));
+  }, []);
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("آیا می‌خواهید این تراکنش را حذف کنید؟")) return;
+    const res = await fetch(`/api/inventory?id=${id}`, { method: "DELETE" });
+    const d = await res.json();
+    if (res.ok) { toast.success(d.message || "حذف شد"); fetchLogs(); }
+    else toast.error(d.error || "خطا در حذف");
+  };
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
@@ -124,6 +137,7 @@ export default function InventoryPage() {
                   <th className="p-3 text-right">موجودی بعد</th>
                   <th className="p-3 text-right">ثبت‌کننده</th>
                   <th className="p-3 text-right">تاریخ</th>
+                  <th className="p-3 text-right"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -144,6 +158,13 @@ export default function InventoryPage() {
                       <td className="p-3 font-semibold text-gray-800">{formatNumber(l.newStock)}</td>
                       <td className="p-3 text-gray-500">{l.userName || "-"}</td>
                       <td className="p-3 text-gray-400 text-xs">{formatDateTime(l.createdAt)}</td>
+                      <td className="p-3">
+                        {isAdmin && (
+                          <button onClick={() => handleDelete(l.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   );
                 })}
