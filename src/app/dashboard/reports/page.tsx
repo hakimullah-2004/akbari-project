@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { formatCurrency, formatDate, formatNumber, EXPENSE_CATEGORY_LABELS } from "@/lib/utils";
 import { BarChart3, TrendingUp, TrendingDown, Wallet, ShoppingCart, AlertTriangle, Clock, Users } from "lucide-react";
+import JalaliDateInput from "@/components/JalaliDateInput";
 
 interface Summary {
   totalSales: number;
@@ -64,9 +65,9 @@ export default function ReportsPage() {
           <p className="text-gray-500 text-sm mt-1">تحلیل عملکرد فروشگاه</p>
         </div>
         <div className="flex gap-2">
-          <input type="date" value={from} onChange={e => setFrom(e.target.value)}
+          <JalaliDateInput value={from} onChange={setFrom}
             className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
-          <input type="date" value={to} onChange={e => setTo(e.target.value)}
+          <JalaliDateInput value={to} onChange={setTo}
             className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
         </div>
       </div>

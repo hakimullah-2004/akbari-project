@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { formatCurrency, formatDate, EXPENSE_CATEGORY_LABELS } from "@/lib/utils";
 import { Plus, DollarSign, Trash2, X, Calendar } from "lucide-react";
+import JalaliDateInput from "@/components/JalaliDateInput";
 
 interface Expense {
   id: number;
@@ -94,12 +95,12 @@ export default function ExpensesPage() {
       <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
           <label className="block text-xs text-gray-500 mb-1">از تاریخ</label>
-          <input type="date" value={from} onChange={e => setFrom(e.target.value)}
+          <JalaliDateInput value={from} onChange={setFrom}
             className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
         </div>
         <div>
           <label className="block text-xs text-gray-500 mb-1">تا تاریخ</label>
-          <input type="date" value={to} onChange={e => setTo(e.target.value)}
+          <JalaliDateInput value={to} onChange={setTo}
             className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
         </div>
         <div>
@@ -175,7 +176,7 @@ export default function ExpensesPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">تاریخ</label>
-                <input type="date" value={form.expenseDate} onChange={e => setForm({ ...form, expenseDate: e.target.value })}
+                <JalaliDateInput value={form.expenseDate} onChange={v => setForm({ ...form, expenseDate: v })}
                   className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
               </div>
               <div>

@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
       productId: stockTransactions.productId,
       productName: products.name,
       productUnit: products.unit,
+      productStorageLocation: products.storageLocation,
       transactionType: stockTransactions.transactionType,
       quantity: stockTransactions.quantity,
       previousStock: stockTransactions.previousStock,

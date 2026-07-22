@@ -57,8 +57,8 @@ export default function LoginPage() {
               <Leaf className="w-10 h-10 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">سیستم دانا</h1>
-          <p className="text-green-200 text-sm">مدیریت فروشگاه زراعتی و مالداری افغانستان</p>
+          <h1 className="text-3xl font-bold text-white mb-2">مزرعه سبز اکبری</h1>
+          <p className="text-green-200 text-sm">فروشگاه زراعتی و مالداری افغانستان</p>
         </div>
 
         {/* Login Form */}
@@ -133,7 +133,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-white/60 text-xs mt-4">
-          © ۲۰۲۴ سیستم دانا - تمام حقوق محفوظ است
+          © ۲۰۲۴ مزرعه سبز اکبری - تمام حقوق محفوظ است
         </p>
       </div>
     </div>

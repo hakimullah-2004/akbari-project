@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { formatDateTime, ACTIVITY_TYPE_LABELS } from "@/lib/utils";
-import { Activity, ShieldAlert } from "lucide-react";
+import { Activity, ShieldAlert, Trash2 } from "lucide-react";
 
 interface Log {
   id: number;
@@ -32,14 +33,31 @@ export default function ActivityPage() {
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
 
-  useEffect(() => {
+  const fetchLogs = () => {
+    setLoading(true);
     fetch("/api/activity-logs?limit=100").then(async r => {
       if (r.status === 401) { setUnauthorized(true); setLoading(false); return; }
       const d = await r.json();
       setLogs(d.logs || []);
       setLoading(false);
     });
-  }, []);
+  };
+
+  useEffect(() => { fetchLogs(); }, []);
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("آیا می‌خواهید این فعالیت را حذف کنید؟")) return;
+    const res = await fetch(`/api/activity-logs?id=${id}`, { method: "DELETE" });
+    if (res.ok) { toast.success("حذف شد"); fetchLogs(); }
+    else toast.error("خطا در حذف");
+  };
+
+  const handleClearAll = async () => {
+    if (!confirm("آیا می‌خواهید تمام فعالیت‌های ثبت‌شده را حذف کنید؟ این کار قابل بازگشت نیست.")) return;
+    const res = await fetch(`/api/activity-logs?all=true`, { method: "DELETE" });
+    if (res.ok) { toast.success("تمام فعالیت‌ها حذف شدند"); fetchLogs(); }
+    else toast.error("خطا در حذف");
+  };
 
   if (unauthorized) {
     return (
@@ -53,11 +71,18 @@ export default function ActivityPage() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <Activity className="w-6 h-6 text-green-600" /> فعالیت کاربران
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">آخرین فعالیت‌های ثبت‌شده در سیستم</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <Activity className="w-6 h-6 text-green-600" /> فعالیت کاربران
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">آخرین فعالیت‌های ثبت‌شده در سیستم</p>
+        </div>
+        {logs.length > 0 && (
+          <button onClick={handleClearAll} className="flex items-center gap-2 text-red-600 border border-red-200 hover:bg-red-50 px-4 py-2.5 rounded-xl font-medium transition-colors">
+            <Trash2 className="w-4 h-4" /> پاک کردن همه
+          </button>
+        )}
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -74,6 +99,7 @@ export default function ActivityPage() {
                   <th className="p-3 text-right">نوع فعالیت</th>
                   <th className="p-3 text-right">توضیحات</th>
                   <th className="p-3 text-right">تاریخ و زمان</th>
+                  <th className="p-3 text-right"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -87,6 +113,11 @@ export default function ActivityPage() {
                     </td>
                     <td className="p-3 text-gray-600">{l.description}</td>
                     <td className="p-3 text-gray-400 text-xs">{formatDateTime(l.createdAt)}</td>
+                    <td className="p-3">
+                      <button onClick={() => handleDelete(l.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 import { Plus, TruckIcon, Receipt } from "lucide-react";
+import JalaliDateInput from "@/components/JalaliDateInput";
 
 interface Purchase {
   id: number;
@@ -64,12 +65,12 @@ export default function PurchasesPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-gray-500 mb-1 block">از تاریخ</label>
-            <input type="date" value={from} onChange={e => { setFrom(e.target.value); setPage(1); }}
+            <JalaliDateInput value={from} onChange={v => { setFrom(v); setPage(1); }}
               className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label className="text-xs text-gray-500 mb-1 block">تا تاریخ</label>
-            <input type="date" value={to} onChange={e => { setTo(e.target.value); setPage(1); }}
+            <JalaliDateInput value={to} onChange={v => { setTo(v); setPage(1); }}
               className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>

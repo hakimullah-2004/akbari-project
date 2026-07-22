@@ -10,6 +10,7 @@ export async function POST() {
     }
     const cookieStore = await cookies();
     cookieStore.delete("auth_token");
+    cookieStore.delete("last_activity");
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "خطای سرور" }, { status: 500 });

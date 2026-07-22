@@ -10,6 +10,7 @@ interface StockLog {
   productId: number;
   productName: string | null;
   productUnit: string | null;
+  productStorageLocation: string | null;
   transactionType: string;
   quantity: string;
   previousStock: string;
@@ -116,6 +117,7 @@ export default function InventoryPage() {
               <thead className="bg-gray-50 text-gray-500">
                 <tr>
                   <th className="p-3 text-right">جنس</th>
+                  <th className="p-3 text-right">محل نگهداری</th>
                   <th className="p-3 text-right">نوع تراکنش</th>
                   <th className="p-3 text-right">مقدار</th>
                   <th className="p-3 text-right">موجودی قبل</th>
@@ -130,6 +132,7 @@ export default function InventoryPage() {
                   return (
                     <tr key={l.id} className="hover:bg-gray-50">
                       <td className="p-3 font-medium text-gray-800">{l.productName || "-"}</td>
+                      <td className="p-3 text-gray-500">{l.productStorageLocation || "-"}</td>
                       <td className="p-3">
                         <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${isIncrease ? "bg-green-50 text-green-700" : "bg-orange-50 text-orange-700"}`}>
                           {isIncrease ? <ArrowUp className="w-3 h-3" /> : l.transactionType === "adjustment" ? <Settings2 className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}

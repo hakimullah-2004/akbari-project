@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "سیستم مدیریت فروشگاه زراعتی و مالداری - دانا",
+  title: "فروشگاه زراعتی و مالداری مزرعه سبز اکبری",
   description: "سیستم حرفه‌ای مدیریت فروشگاه محصولات زراعتی و مالداری",
 };
 

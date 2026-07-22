@@ -139,7 +139,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">داشبورد مدیریت</h1>
-          <p className="text-gray-500 text-sm mt-1">خوش آمدید به سیستم دانا - فروشگاه زراعتی و مالداری</p>
+          <p className="text-gray-500 text-sm mt-1">خوش آمدید به فروشگاه زراعتی و مالداری مزرعه سبز اکبری</p>
         </div>
         <div className="hidden sm:flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-xl border border-green-200">
           <Calendar className="w-4 h-4" />

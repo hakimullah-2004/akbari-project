@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+const IDLE_LIMIT_MS = 10 * 60 * 1000; // 10 minutes
+
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
+  const lastActivity = request.cookies.get("last_activity")?.value;
   const { pathname } = request.nextUrl;
 
   const publicPaths = ["/login", "/api/auth/login"];
@@ -24,7 +27,30 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  return NextResponse.next();
+  // Idle timeout: if too long has passed since the last recorded activity, force logout
+  if (lastActivity) {
+    const idleFor = Date.now() - parseInt(lastActivity, 10);
+    if (idleFor > IDLE_LIMIT_MS) {
+      const isApi = pathname.startsWith("/api/");
+      const response = isApi
+        ? NextResponse.json({ error: "نشست شما به دلیل عدم فعالیت منقضی شده است" }, { status: 401 })
+        : NextResponse.redirect(new URL("/login", request.url));
+      response.cookies.delete("auth_token");
+      response.cookies.delete("last_activity");
+      return response;
+    }
+  }
+
+  const response = NextResponse.next();
+  const isHttps = request.nextUrl.protocol === "https:";
+  response.cookies.set("last_activity", String(Date.now()), {
+    httpOnly: true,
+    secure: isHttps,
+    sameSite: isHttps ? "none" : "lax",
+    maxAge: 60 * 60 * 24 * 7,
+    path: "/",
+  });
+  return response;
 }
 
 export const config = {

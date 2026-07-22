@@ -8,6 +8,7 @@ import {
   Filter, Package, X, ChevronDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import JalaliDateInput from "@/components/JalaliDateInput";
 
 interface Product {
   id: number;
@@ -220,6 +221,7 @@ export default function ProductsPage() {
                   <th className="text-right px-4 py-3 font-semibold text-gray-600 hidden md:table-cell">نوع</th>
                   <th className="text-right px-4 py-3 font-semibold text-gray-600 hidden lg:table-cell">کتگوری</th>
                   <th className="text-right px-4 py-3 font-semibold text-gray-600">موجودی</th>
+                  <th className="text-right px-4 py-3 font-semibold text-gray-600 hidden lg:table-cell">محل نگهداری</th>
                   <th className="text-right px-4 py-3 font-semibold text-gray-600 hidden md:table-cell">قیمت فروش</th>
                   <th className="text-right px-4 py-3 font-semibold text-gray-600 hidden lg:table-cell">تاریخ انقضا</th>
                   <th className="text-right px-4 py-3 font-semibold text-gray-600">عملیات</th>
@@ -255,6 +257,7 @@ export default function ProductsPage() {
                           {parseFloat(p.currentStock)} {p.unit}
                         </span>
                       </td>
+                      <td className="px-4 py-3 text-gray-600 hidden lg:table-cell">{p.storageLocation || "-"}</td>
                       <td className="px-4 py-3 hidden md:table-cell font-medium text-green-700">{formatCurrency(p.salePrice)}</td>
                       <td className="px-4 py-3 hidden lg:table-cell">
                         {p.expiryDate ? (
@@ -363,13 +366,13 @@ export default function ProductsPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">تاریخ تولید</label>
-                  <input type="date" value={form.productionDate} onChange={e => setForm({ ...form, productionDate: e.target.value })}
+                  <JalaliDateInput value={form.productionDate} onChange={v => setForm({ ...form, productionDate: v })}
                     className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">تاریخ انقضا</label>
-                  <input type="date" value={form.expiryDate} onChange={e => setForm({ ...form, expiryDate: e.target.value })}
+                  <JalaliDateInput value={form.expiryDate} onChange={v => setForm({ ...form, expiryDate: v })}
                     className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
                 </div>
 

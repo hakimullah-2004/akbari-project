@@ -46,6 +46,13 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });
+    cookieStore.set("last_activity", String(Date.now()), {
+      httpOnly: true,
+      secure: isHttps,
+      sameSite: isHttps ? "none" : "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
 
     await logActivity(user.id, "login", `ورود به سیستم توسط ${user.username}`);
 

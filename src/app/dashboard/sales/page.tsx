@@ -4,8 +4,9 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
-import { Plus, Search, Eye, Receipt, Filter } from "lucide-react";
+import { Plus, Search, Eye, Receipt, Filter, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import JalaliDateInput from "@/components/JalaliDateInput";
 
 interface Sale {
   id: number;
@@ -32,6 +33,18 @@ export default function SalesPage() {
   const [to, setTo] = useState("");
   const [filterCredit, setFilterCredit] = useState(false);
   const [page, setPage] = useState(1);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then(r => r.ok ? r.json() : null).then(d => setIsAdmin(d?.user?.role === "admin"));
+  }, []);
+
+  const handleDelete = async (id: number, invoiceNumber: string) => {
+    if (!confirm(`آیا مطمئن هستید که می‌خواهید بل شماره ${invoiceNumber} را حذف کنید؟ این کار موجودی و بدهی مرتبط را نیز برمی‌گرداند.`)) return;
+    const res = await fetch(`/api/sales/${id}`, { method: "DELETE" });
+    if (res.ok) { toast.success("بل حذف شد"); fetchSales(); }
+    else { const d = await res.json(); toast.error(d.error || "خطا در حذف"); }
+  };
 
   const fetchSales = useCallback(async () => {
     setLoading(true);
@@ -76,12 +89,12 @@ export default function SalesPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label className="text-xs text-gray-500 mb-1 block">از تاریخ</label>
-            <input type="date" value={from} onChange={e => { setFrom(e.target.value); setPage(1); }}
+            <JalaliDateInput value={from} onChange={v => { setFrom(v); setPage(1); }}
               className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
           </div>
           <div>
             <label className="text-xs text-gray-500 mb-1 block">تا تاریخ</label>
-            <input type="date" value={to} onChange={e => { setTo(e.target.value); setPage(1); }}
+            <JalaliDateInput value={to} onChange={v => { setTo(v); setPage(1); }}
               className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
           </div>
           <div className="flex items-end">
@@ -141,10 +154,17 @@ export default function SalesPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <Link href={`/dashboard/sales/${s.id}`}
-                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg inline-flex">
-                        <Eye className="w-4 h-4" />
-                      </Link>
+                      <div className="flex gap-1">
+                        <Link href={`/dashboard/sales/${s.id}`}
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg inline-flex">
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                        {isAdmin && (
+                          <button onClick={() => handleDelete(s.id, s.invoiceNumber)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

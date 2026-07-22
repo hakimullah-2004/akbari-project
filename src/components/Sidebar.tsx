@@ -149,7 +149,7 @@ export default function Sidebar({ userRole, userName }: SidebarProps) {
             <Leaf className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-white font-bold text-lg leading-tight">سیستم دانا</h1>
+            <h1 className="text-white font-bold text-lg leading-tight">مزرعه سبز اکبری</h1>
             <p className="text-green-300 text-xs">فروشگاه زراعتی و مالداری</p>
           </div>
         </div>

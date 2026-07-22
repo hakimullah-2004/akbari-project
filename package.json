@@ -23,8 +23,10 @@
     "next": "16.2.6",
     "pg": "8.20.0",
     "react": "19.2.6",
+    "react-date-object": "^2.1.9",
     "react-dom": "19.2.6",
     "react-hot-toast": "^2.6.0",
+    "react-multi-date-picker": "^4.5.2",
     "recharts": "^3.10.0",
     "tailwind-merge": "^3.6.0",
     "xlsx": "^0.18.5"

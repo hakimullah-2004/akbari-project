@@ -106,7 +106,7 @@ export default function SaleDetailPage() {
         <div className="bg-gradient-to-r from-green-700 to-emerald-700 text-white p-6">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold">🌾 سیستم دانا</h2>
+              <h2 className="text-2xl font-bold">🌾 فروشگاه زراعتی و مالداری مزرعه سبز اکبری</h2>
               <p className="text-green-200 text-sm mt-1">فروشگاه زراعتی و مالداری افغانستان</p>
             </div>
             <div className="text-left">
