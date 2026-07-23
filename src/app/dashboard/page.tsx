@@ -5,11 +5,12 @@ import { formatCurrency, formatDate, getDaysUntilExpiry } from "@/lib/utils";
 import {
   TrendingUp, TrendingDown, ShoppingBag, Package,
   AlertTriangle, Calendar, CreditCard, DollarSign,
-  BarChart3, ArrowUpRight
+  BarChart3, ArrowUpRight, Receipt, Sparkles, CheckCircle2
 } from "lucide-react";
+import Link from "next/link";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, BarChart, Bar, Legend
+  ResponsiveContainer, Legend
 } from "recharts";
 
 interface DashboardData {
@@ -133,33 +134,60 @@ export default function DashboardPage() {
     },
   ];
 
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "صبح بخیر" : hour < 17 ? "روز بخیر" : "شام بخیر";
+
+  const quickActions = [
+    { label: "فروش جدید", href: "/dashboard/sales/new", icon: Receipt, color: "bg-green-600 hover:bg-green-700" },
+    { label: "خرید جدید", href: "/dashboard/purchases/new", icon: ShoppingBag, color: "bg-blue-600 hover:bg-blue-700" },
+    { label: "ثبت مصرف", href: "/dashboard/expenses", icon: DollarSign, color: "bg-amber-600 hover:bg-amber-700" },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">داشبورد مدیریت</h1>
-          <p className="text-gray-500 text-sm mt-1">خوش آمدید به فروشگاه زراعتی و مالداری مزرعه سبز اکبری</p>
+      {/* Hero */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-l from-green-700 via-green-600 to-emerald-600 p-6 sm:p-8 text-white shadow-lg">
+        <div className="absolute -left-8 -top-8 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+        <div className="absolute -left-4 bottom-0 w-24 h-24 bg-white/10 rounded-full blur-xl" />
+        <div className="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+          <div>
+            <div className="flex items-center gap-2 text-green-100 text-sm mb-2">
+              <Sparkles className="w-4 h-4" />
+              <span>{greeting}</span>
+              <span className="opacity-50">•</span>
+              <span>{new Date().toLocaleDateString("fa-AF", { year: "numeric", month: "long", day: "numeric" })}</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold">مزرعه سبز اکبری</h1>
+            <p className="text-green-100 text-sm mt-1">فروشگاه زراعتی و مالداری — خلاصه‌ی وضعیت امروز</p>
+          </div>
+          <div className="bg-white/15 backdrop-blur rounded-2xl px-5 py-3 border border-white/20">
+            <p className="text-xs text-green-100 mb-1">فروش امروز</p>
+            <p className="text-2xl font-bold">{formatCurrency(data.todaySales)}</p>
+            <p className="text-xs text-green-100 mt-0.5">{data.todaySalesCount} بل ثبت‌شده</p>
+          </div>
         </div>
-        <div className="hidden sm:flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-xl border border-green-200">
-          <Calendar className="w-4 h-4" />
-          <span className="text-sm font-medium">
-            {new Date().toLocaleDateString("fa-AF", { year: "numeric", month: "long", day: "numeric" })}
-          </span>
+        <div className="relative flex flex-wrap gap-2 mt-6">
+          {quickActions.map(a => (
+            <Link key={a.href} href={a.href}
+              className={`flex items-center gap-2 ${a.color} text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors shadow-sm`}>
+              <a.icon className="w-4 h-4" /> {a.label}
+            </Link>
+          ))}
         </div>
       </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {statCards.map((card) => (
-          <div key={card.label} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div key={card.label} className="group relative bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden">
+            <div className={`absolute top-0 right-0 left-0 h-1 bg-gradient-to-l ${card.color}`} />
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-sm text-gray-500 mb-1">{card.label}</p>
                 <p className="text-xl font-bold text-gray-800 mb-1">{card.value}</p>
                 <p className={`text-xs ${card.textColor}`}>{card.sub}</p>
               </div>
-              <div className={`w-10 h-10 rounded-xl ${card.bgColor} flex items-center justify-center`}>
+              <div className={`w-11 h-11 rounded-2xl ${card.bgColor} flex items-center justify-center group-hover:scale-105 transition-transform`}>
                 <card.icon className={`w-5 h-5 ${card.textColor}`} />
               </div>
             </div>
@@ -175,22 +203,37 @@ export default function DashboardPage() {
         </h3>
         {chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#6b7280" }} />
-              <YAxis tick={{ fontSize: 11, fill: "#6b7280" }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+            <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+              <defs>
+                <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#16a34a" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#16a34a" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorPurchases" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#6b7280" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: "#6b7280" }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} axisLine={false} tickLine={false} />
               <Tooltip
                 formatter={(value) => [formatCurrency(Number(value) || 0), ""]}
                 contentStyle={{ fontFamily: "inherit", borderRadius: "12px", border: "1px solid #e5e7eb" }}
               />
               <Legend />
-              <Bar dataKey="فروش" fill="#16a34a" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="خرید" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="مصارف" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-            </BarChart>
+              <Area type="monotone" dataKey="فروش" stroke="#16a34a" strokeWidth={2.5} fill="url(#colorSales)" />
+              <Area type="monotone" dataKey="خرید" stroke="#3b82f6" strokeWidth={2.5} fill="url(#colorPurchases)" />
+              <Area type="monotone" dataKey="مصارف" stroke="#f59e0b" strokeWidth={2.5} fill="url(#colorExpenses)" />
+            </AreaChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-64 flex items-center justify-center text-gray-400">
+          <div className="h-64 flex flex-col items-center justify-center text-gray-400 gap-2">
+            <BarChart3 className="w-10 h-10 opacity-20" />
             <p>هنوز داده‌ای برای نمایش وجود ندارد</p>
           </div>
         )}
@@ -199,16 +242,23 @@ export default function DashboardPage() {
       {/* Alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Low Stock */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-          <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-            اجناس کم موجود
-            {data.lowStockProducts.length > 0 && (
-              <span className="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full">{data.lowStockProducts.length}</span>
-            )}
-          </h3>
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 border-r-4 border-r-amber-400">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-800 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
+              اجناس کم موجود
+              {data.lowStockProducts.length > 0 && (
+                <span className="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full">{data.lowStockProducts.length}</span>
+              )}
+            </h3>
+            <Link href="/dashboard/products" className="text-xs text-gray-400 hover:text-green-600 flex items-center gap-0.5 transition-colors">
+              همه <ArrowUpRight className="w-3 h-3" />
+            </Link>
+          </div>
           {data.lowStockProducts.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-4">✅ همه اجناس موجودی کافی دارند</p>
+            <p className="text-gray-400 text-sm text-center py-4 flex items-center justify-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-green-500" /> همه اجناس موجودی کافی دارند
+            </p>
           ) : (
             <div className="space-y-2">
               {data.lowStockProducts.slice(0, 5).map(p => (
@@ -224,16 +274,23 @@ export default function DashboardPage() {
         </div>
 
         {/* Expiring Soon */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-          <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-500" />
-            نزدیک به انقضا
-            {data.expiringProducts.length > 0 && (
-              <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">{data.expiringProducts.length}</span>
-            )}
-          </h3>
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 border-r-4 border-r-blue-400">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-800 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-blue-500" />
+              نزدیک به انقضا
+              {data.expiringProducts.length > 0 && (
+                <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">{data.expiringProducts.length}</span>
+              )}
+            </h3>
+            <Link href="/dashboard/products" className="text-xs text-gray-400 hover:text-green-600 flex items-center gap-0.5 transition-colors">
+              همه <ArrowUpRight className="w-3 h-3" />
+            </Link>
+          </div>
           {data.expiringProducts.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-4">✅ هیچ جنسی در ۳۰ روز آینده منقضی نمی‌شود</p>
+            <p className="text-gray-400 text-sm text-center py-4 flex items-center justify-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-green-500" /> هیچ جنسی در ۳۰ روز آینده منقضی نمی‌شود
+            </p>
           ) : (
             <div className="space-y-2">
               {data.expiringProducts.slice(0, 5).map(p => {
@@ -252,16 +309,23 @@ export default function DashboardPage() {
         </div>
 
         {/* Expired */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-          <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-            <TrendingDown className="w-5 h-5 text-red-500" />
-            اجناس منقضی‌شده
-            {data.expiredProducts.length > 0 && (
-              <span className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full">{data.expiredProducts.length}</span>
-            )}
-          </h3>
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 border-r-4 border-r-red-400">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-800 flex items-center gap-2">
+              <TrendingDown className="w-5 h-5 text-red-500" />
+              اجناس منقضی‌شده
+              {data.expiredProducts.length > 0 && (
+                <span className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full">{data.expiredProducts.length}</span>
+              )}
+            </h3>
+            <Link href="/dashboard/products" className="text-xs text-gray-400 hover:text-green-600 flex items-center gap-0.5 transition-colors">
+              همه <ArrowUpRight className="w-3 h-3" />
+            </Link>
+          </div>
           {data.expiredProducts.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-4">✅ هیچ جنس منقضی‌شده‌ای وجود ندارد</p>
+            <p className="text-gray-400 text-sm text-center py-4 flex items-center justify-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-green-500" /> هیچ جنس منقضی‌شده‌ای وجود ندارد
+            </p>
           ) : (
             <div className="space-y-2">
               {data.expiredProducts.slice(0, 5).map(p => (
