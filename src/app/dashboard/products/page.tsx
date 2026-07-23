@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import JalaliDateInput from "@/components/JalaliDateInput";
+import { confirmDialog } from "@/components/ConfirmDialogHost";
 
 interface Product {
   id: number;
@@ -138,7 +139,7 @@ export default function ProductsPage() {
   };
 
   const handleDelete = async (id: number, name: string) => {
-    if (!confirm(`آیا می‌خواهید جنس "${name}" را حذف کنید؟`)) return;
+    if (!(await confirmDialog(`آیا می‌خواهید جنس "${name}" را حذف کنید؟`))) return;
     const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
     if (res.ok) { toast.success("جنس حذف شد"); fetchProducts(); }
     else toast.error("خطا در حذف");
@@ -391,12 +392,14 @@ export default function ProductsPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">تعداد موجود</label>
                   <input type="number" value={form.currentStock} onChange={e => setForm({ ...form, currentStock: e.target.value })}
+                    onFocus={e => e.target.select()}
                     className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">حداقل موجودی</label>
                   <input type="number" value={form.minStock} onChange={e => setForm({ ...form, minStock: e.target.value })}
+                    onFocus={e => e.target.select()}
                     className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
                 </div>
 
