@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { sales, saleItems, products, customers, stockTransactions } from "@/db/schema";
+import { sales, saleItems, products, customers, stockTransactions, creditPayments } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { getSession, logActivity } from "@/lib/auth";
 
@@ -95,6 +95,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       }).where(eq(customers.id, sale.customerId));
     }
 
+    await db.delete(creditPayments).where(eq(creditPayments.saleId, saleId));
     await db.delete(saleItems).where(eq(saleItems.saleId, saleId));
     await db.delete(sales).where(eq(sales.id, saleId));
 

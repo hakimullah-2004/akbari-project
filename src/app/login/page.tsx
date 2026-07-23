@@ -58,7 +58,7 @@ export default function LoginPage() {
             </div>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">مزرعه سبز اکبری</h1>
-          <p className="text-green-200 text-sm">فروشگاه زراعتی و مالداری افغانستان</p>
+          <p className="text-green-200 text-sm">فروشگاه زراعتی و مالداری مزرعه سبز اکبری</p>
         </div>
 
         {/* Login Form */}
@@ -127,13 +127,13 @@ export default function LoginPage() {
 
           <div className="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">
             <p className="text-xs text-green-700 text-center font-medium">
-              🌾 سیستم مدیریت فروشگاه‌های زراعتی و مالداری افغانستان
+              🌾 سیستم مدیریت فروشگاه زراعتی و مالداری مزرعه سبز اکبری
             </p>
           </div>
         </div>
 
         <p className="text-center text-white/60 text-xs mt-4">
-          © ۲۰۲۴ مزرعه سبز اکبری - تمام حقوق محفوظ است
+          © ۲۰۲۶ مزرعه سبز اکبری - تمام حقوق محفوظ است
         </p>
       </div>
     </div>
